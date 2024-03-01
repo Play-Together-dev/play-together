@@ -147,12 +147,12 @@ void Game::handleEvents(int &direction, float &moveY) {
 }
 
 void Game::applyPlayerMovement(float &moveX, int direction, float  &timeSpeed, float &moveY) {
+    float slope_inclination = 0;
 
     // The player move on the x-axis
     if(player.wantToMove){
         timeSpeed += 0.1F;
         moveX = player.speedMax * player.speed * timeSpeed;
-        //printf("\n%d\n\n\n\n", moveX > player.speedMax);
         if (moveX > player.speedMax){
             moveX = player.speedMax;
         }
@@ -199,9 +199,10 @@ void Game::applyPlayerMovement(float &moveX, int direction, float  &timeSpeed, f
 
     }
 
-    handleCollisions(direction, moveY);
+    handleCollisions(direction, moveY, &slope_inclination);
     if (player.canMove) {
         player.x += moveX;
+        moveY += slope_inclination * moveX; // Slope displacement
     }
     player.y += moveY;
 }
@@ -273,8 +274,9 @@ void Game::applyCameraMovement() {
     }
 }
 
-void Game::handleCollisions(int direction, float moveY) {
+void Game::handleCollisions(int direction, float moveY, float *slope_inclination) {
     player.canMove = true;
+
     if (moveY != 0 || direction != 0) {
         player.isOnPlatform = false;
 
@@ -291,6 +293,9 @@ void Game::handleCollisions(int direction, float moveY) {
             if (!player.isOnPlatform && checkCollision(player.getVerticesGround(), obstacle)) {
                 printf("Collision detected on foot\n");
                 player.isOnPlatform = true;
+                std::vector<Point> edge = getCollidedEdge(player.getVerticesGround(), obstacle);
+                printf("RESULTAT :\n(%f, %f)\n(%f, %f)\n", edge[0].x, edge[0].y, edge[1].x, edge[1].y);
+                *slope_inclination = (edge[0].y - edge[1].y) / (edge[0].x - edge[1].x);
             }
 
             // If collision detected with the wall, the player can't move
@@ -344,28 +349,28 @@ void Game::render() {
     for (size_t i = 0; i < vertexRight.size(); ++i) {
         const auto &vertex1 = vertexRight[i];
         const auto &vertex2 = vertexRight[(i + 1) % vertexRight.size()];
-        SDL_RenderDrawLine(renderer, vertex1.x, vertex1.y, vertex2.x, vertex2.y);
+        SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x, vertex2.y - camera.y);
     }
     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
     std::vector<Point> vertexLeft = player.getVerticesHorizontal(-1);
     for (size_t i = 0; i < vertexLeft.size(); ++i) {
         const auto &vertex1 = vertexLeft[i];
         const auto &vertex2 = vertexLeft[(i + 1) % vertexLeft.size()];
-        SDL_RenderDrawLine(renderer, vertex1.x, vertex1.y, vertex2.x, vertex2.y);
+        SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x, vertex2.y - camera.y);
     }
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     std::vector<Point> vertex = player.getVerticesRoof();
     for (size_t i = 0; i < vertex.size(); ++i) {
         const auto &vertex1 = vertex[i];
         const auto &vertex2 = vertex[(i + 1) % vertex.size()];
-        SDL_RenderDrawLine(renderer, vertex1.x, vertex1.y, vertex2.x, vertex2.y);
+        SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x, vertex2.y - camera.y);
     }
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     std::vector<Point> vertexGround = player.getVerticesGround();
     for (size_t i = 0; i < vertexGround.size(); ++i) {
         const auto &vertex1 = vertexGround[i];
         const auto &vertex2 = vertexGround[(i + 1) % vertexGround.size()];
-        SDL_RenderDrawLine(renderer, vertex1.x, vertex1.y, vertex2.x, vertex2.y);
+        SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x, vertex2.y - camera.y);
     }
     */
 

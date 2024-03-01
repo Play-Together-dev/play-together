@@ -94,7 +94,7 @@ private:
      * @param moveY The movement along the Y-axis.
      * @param[out] slope_inclination The polygon that the player is on if he is on a platform
      */
-    void handleCollisions(int direction, float moveY);
+    void handleCollisions(int direction, float moveY, float *slope_inclination);
 
     /**
      * @brief Renders the game by drawing the player and obstacles.
