@@ -92,6 +92,7 @@ private:
      * @brief Handles collisions between the player and obstacles.
      * @param direction The direction along the X-axis.
      * @param moveY The movement along the Y-axis.
+     * @param[out] slope_inclination The polygon that the player is on if he is on a platform
      */
     void handleCollisions(int direction, float moveY);
 
@@ -106,7 +107,18 @@ private:
      * @param obstacle The polygon obstacle.
      * @return True if a collision is detected, false otherwise.
      */
-    static bool checkCollision(const std::vector<Point>& playerVertices, const Polygon &obstacle);
+    static bool checkCollision(const std::vector<Point> &playerVertices, const Polygon &obstacle);
+
+    /**
+     * @brief Get the edge of the obstacle that collided with the player
+     * @param playerVertices The vector of Point representing the vertices of the player object.
+     * @param obstacle The polygon obstacle.
+     * @return Two points representing an edge.
+     * @pre The two objects must collide (checkCollision(playerVertices, obstacle) must return true)
+     * @warning The function may return a wrong value for an obstacle with only 3 vertices
+     * TODO: Fix the case where the obstacle has only 3 vertices
+     */
+    [[nodiscard]] static std::vector<Point> getCollidedEdge(const std::vector<Point> &playerVertices, const Polygon &obstacle);
 
     /**
      * @brief Checks if a polygon is convex.

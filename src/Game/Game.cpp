@@ -200,7 +200,7 @@ void Game::applyPlayerMovement(float &moveX, int direction, float  &timeSpeed, f
     }
 
     handleCollisions(direction, moveY);
-    if(player.canMove){
+    if (player.canMove) {
         player.x += moveX;
     }
     player.y += moveY;
@@ -434,6 +434,58 @@ bool Game::checkCollision(const std::vector<Point> &playerVertices, const Polygo
     }
 
     return true; // Collision detected
+}
+
+std::vector<Point> Game::getCollidedEdge(const std::vector<Point> &playerVertices, const Polygon &obstacle) {
+    Polygon obstacleCopy = obstacle; // Make a copy of the original obstacle
+    Point removedVertex = obstacleCopy.vertices.back(); // Get the last vertex of the obstacle
+    obstacleCopy.vertices.pop_back(); // Remove the last vertex of the obstacle
+
+    // Remove a vertex from the obstacle until it no longer collides
+    while (obstacleCopy.vertices.size() > 3 && checkCollision(playerVertices, obstacleCopy)) {
+        removedVertex = obstacleCopy.vertices.back(); // Get the last vertex of the obstacle
+        obstacleCopy.vertices.pop_back(); // Remove the last vertex of the obstacle
+    }
+
+    // The obstacle is empty before finding the edge
+    if (obstacleCopy.vertices.size() == 3 && checkCollision(playerVertices, obstacleCopy)) {
+
+        // There is only 3 vertices left : A, B, C, we have to check if the edge is A, B or B, C
+
+        // Remove the third vertex (C vertex)
+        obstacleCopy.vertices.push_back(removedVertex);
+        auto it = obstacleCopy.vertices.begin() + 2;
+        removedVertex = *it;
+        obstacleCopy.vertices.erase(it);
+
+        // If the obstacle does not collide without the C vertex, the two vertices are B, C
+        if (!checkCollision(playerVertices, obstacleCopy)) {
+            return {obstacleCopy.vertices[1], removedVertex};
+        }
+        //Else the two vertices are A, B
+        else {
+            return {obstacleCopy.vertices[0], obstacleCopy.vertices[1]};
+        }
+    }
+
+    // The first end of the edge is found before emptying the obstacle
+    else {
+        // We have to check if the other end of the edge is the vertex before or after the removed one
+
+        Point leftVertex = obstacleCopy.vertices.back(); // Save the vertex positioned before the removed one
+        obstacleCopy.vertices.pop_back(); // Get rid of the vertex before the removed one from the obstacle
+        obstacleCopy.vertices.push_back(removedVertex); // Put back the removed one into the obstacle
+
+        // If the obstacle collide without this vertex, the good vertex is after the removed one
+        if (checkCollision(playerVertices, obstacleCopy)) {
+            return {removedVertex,
+                    obstacleCopy.vertices[0]}; // The vertex after the removed one is the first element of obstacle.vertices
+        }
+        // Else the good vertex is before the removed one
+        else {
+            return {removedVertex, leftVertex};
+        }
+    }
 }
 
 bool Game::isConvex(const Polygon &polygon) {
