@@ -1,5 +1,5 @@
-#ifndef PLAY_TOGETHER_TCPCLIENT_H
-#define PLAY_TOGETHER_TCPCLIENT_H
+#ifndef PLAY_TOGETHER_UDPCLIENT_H
+#define PLAY_TOGETHER_UDPCLIENT_H
 
 #include <string>
 #include <unistd.h>
@@ -8,23 +8,21 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <cstring>
-#include <thread>
-#include <functional>
 
 /**
- * @brief The TCPClient class provides functionality to create and manage a TCP client.
+ * @brief The UDPClient class provides functionality to create and manage a UDP client.
  */
-class TCPClient {
+class UDPClient {
 public:
     /**
-     * @brief Constructs a TCPClient object.
+     * @brief Constructs a UDPClient object.
      */
-    TCPClient();
+    UDPClient();
 
     /**
-     * @brief Destroys the TCPClient object.
+     * @brief Destroys the UDPClient object.
      */
-    ~TCPClient();
+    ~UDPClient();
 
     /**
      * @brief Gets the socket file descriptor.
@@ -33,18 +31,12 @@ public:
     [[nodiscard]] int getSocketFileDescriptor() const;
 
     /**
-     * @brief Set a callback function to notify menu on server disconnect.
-     * @param callback The callback function.
-     */
-    void setDisconnectCallback(std::function<void()> callback);
-
-    /**
-     * @brief Connects to the specified server.
-     * @param serverAddress The IP address or hostname of the server.
-     * @param port The port number of the server.
+     * @brief Initializes the UDP client with the given server address and port.
+     * @param serverHostname The IP address or hostname of the server.
+     * @param serverPort The port number of the server.
      * @return True if the connection is successful, false otherwise.
      */
-    bool connect(const std::string &serverAddress, short port);
+    bool initialize(const std::string &serverHostname, short serverPort);
 
     /**
      * @brief Starts the client to handle incoming messages.
@@ -67,7 +59,7 @@ public:
      * @brief Receives a message from the server.
      * @return The received message.
      */
-    [[nodiscard]] std::string receive() const;
+    [[nodiscard]] std::string receive(int timeoutMilliseconds) const;
 
     /**
      * @brief Stops the client.
@@ -77,8 +69,7 @@ public:
 private:
     int socketFileDescriptor = -1; /**< The client socket file descriptor. */
     bool stopRequested = false; /**< Flag to indicate if the client should stop. */
-    bool shouldSendDisconnect = true; /**< Flag to indicate if the client should send a disconnect message. */
-    std::function<void()> disconnectCallback; /**< Callback function to notify menu on server disconnect. */
+    struct sockaddr_in serverAddress; /**< The server address structure. */
 };
 
-#endif //PLAY_TOGETHER_TCPCLIENT_H
+#endif //PLAY_TOGETHER_UDPCLIENT_H
