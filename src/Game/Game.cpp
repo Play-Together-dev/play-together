@@ -294,7 +294,6 @@ void Game::handleCollisions(int direction, float moveY, float *slope_inclination
                 printf("Collision detected on foot\n");
                 player.isOnPlatform = true;
                 std::vector<Point> edge = getCollidedEdge(player.getVerticesGround(), obstacle);
-                printf("RESULTAT :\n(%f, %f)\n(%f, %f)\n", edge[0].x, edge[0].y, edge[1].x, edge[1].y);
                 *slope_inclination = (edge[0].y - edge[1].y) / (edge[0].x - edge[1].x);
             }
 

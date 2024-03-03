@@ -40,7 +40,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *args[]) {
     Game game(window, renderer, initialPlayer);
     GameConsole console(&game);
 
-    game.loadPolygonsFromMap("diversity");
+    game.loadPolygonsFromMap("slopeofabitch");
 
     //game.addCharacter(character1);
     //game.addCharacter(character2);
