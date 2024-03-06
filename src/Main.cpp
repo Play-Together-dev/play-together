@@ -1,6 +1,5 @@
 #include <thread>
 #include <mutex>
-#include "../src/Utils/Saves.cpp"
 #include <SDL_ttf.h>
 #include "../include/Game/Game.h"
 #include "../include/Utils/ApplicationConsole.h"
@@ -33,7 +32,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *args[]) {
         return 1;
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94c0fde6586f173e7562bc289d425c8f965cb4bd
     // Load font from a TrueType (TTF) file
     TTF_Font *font = TTF_OpenFont("../assets/font/arial.ttf", 24);
     if (font == nullptr) {
@@ -50,10 +52,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *args[]) {
     Player initialPlayer(-50, 50, 2, 20, 30);
     Game game(window, renderer, camera, level, initialPlayer);
 
+    /*
     //we save the file for the first time in the filename Game
     Saves<Game>::save(game,"Game");
     SDL_DestroyWindow(window);
-    Game ngame = Saves<Game>::load("Game");
+    Game ngame = Saves<Game>::load("Game");*/
 
     // Initialize Menu
     Menu menu(renderer, font, &game, &quit);

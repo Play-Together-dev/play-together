@@ -68,8 +68,7 @@ bool checkAABBCollision(const SDL_FRect &a, const SDL_FRect &b) {
 
 
 /** METHODS **/
-
-Game ::Game() : level(level) {
+Game ::Game() : level(level), player(player) {
         this->window = SDL_CreateWindow("Play Together", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
                                         SDL_WINDOW_SHOWN);
         this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
