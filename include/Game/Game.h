@@ -6,6 +6,7 @@
 #include <climits>
 #include <string>
 #include <ranges>
+#include <cmath>
 #include "Polygon.h"
 #include "Player.h"
 #include "Camera.h"
@@ -32,7 +33,7 @@ public:
 
     Game(SDL_Window *window, SDL_Renderer *renderer, const Camera &camera, Level level,
          const Player &initialPlayer);
-    Game();
+
 
     /** ACCESSORS **/
 
@@ -125,6 +126,7 @@ public:
         ar & characters;
         ar & camera;
     }
+  
 
 
 
@@ -179,13 +181,13 @@ private:
      */
     void render();
 
+
     /**
      * @brief Checks if a polygon is convex.
      * @param polygon The polygon to check.
      * @return True if the polygon is convex, false otherwise.
      */
     static bool isConvex(const Polygon &polygon);
-
 
 };
 

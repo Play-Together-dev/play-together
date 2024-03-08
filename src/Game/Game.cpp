@@ -5,10 +5,17 @@
  * @brief Implements the Game class responsible for handling the main game logic.
  */
 
-/** CONSTRUCTOR **/
+/** CONSTRUCTORS **/
 
 Game::Game(SDL_Window *window, SDL_Renderer *renderer, const Camera &camera, Level level, const Player &initialPlayer)
         : window(window), renderer(renderer), camera(camera), level(std::move(level)), player(initialPlayer) {}
+
+Game::Game() :
+            window(SDL_CreateWindow("Play Together", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                    (int)SCREEN_WIDTH, (int)SCREEN_HEIGHT,SDL_WINDOW_SHOWN)),
+            renderer(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
+            level("experimentation"),
+            player(-50, 50, 1, 2, 20, 30) {}
 
 
 /** ACCESSORS **/
@@ -68,7 +75,10 @@ bool checkAABBCollision(const SDL_FRect &a, const SDL_FRect &b) {
 
 
 /** METHODS **/
-Game ::Game() : level(level), player(player) {
+
+<<<<<<<<< Temporary merge branch 1
+=========
+Game ::Game() : level(level) {
         this->window = SDL_CreateWindow("Play Together", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
                                         SDL_WINDOW_SHOWN);
         this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -76,6 +86,7 @@ Game ::Game() : level(level), player(player) {
         this->level = std::move(Level("experimentation")); //needs to change with load
 }
 
+>>>>>>>>> Temporary merge branch 2
 void Game::addCharacter(const Player &character) {
     characters.push_back(character);
 }
