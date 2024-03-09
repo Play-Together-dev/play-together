@@ -117,8 +117,9 @@ public:
      */
     void removeCharacter(const Player &character);
 
+
     /**
-     * @brief Serialize the game object
+     * @brief method to serialize the game object
      * @tparam Archive
      * @param ar
      * @param version
@@ -198,6 +199,16 @@ private:
      * @brief Renders the game by drawing the player and obstacles.
      */
     void render();
+
+
+
+    /**
+     * @brief Checks if a polygon is convex.
+     * @param polygon The polygon to check.
+     * @return True if the polygon is convex, false otherwise.
+     */
+    static bool isConvex(const Polygon &polygon);
+
 
 };
 
