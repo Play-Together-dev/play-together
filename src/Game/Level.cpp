@@ -8,7 +8,8 @@
 /** CONSTRUCTOR **/
 
 Level::Level(const std::string &map_name) {
-    loadPolygonsFromMap(map_name);
+    loadPolygonsFromMap(map_name,obstacles,POLYGONS_FILE);
+    loadPolygonsFromMap(map_name,dangerObstacles,DANGER_FILE);
 }
 
 
@@ -17,15 +18,18 @@ Level::Level(const std::string &map_name) {
 std::vector<Polygon> Level::getObstacles() const{
     return obstacles;
 }
+std::vector<Polygon> Level::getDangerObstacles() const {
+    return dangerObstacles;
+}
 
 
 /** METHODS **/
 
-void Level::loadPolygonsFromMap(const std::string &mapName) {
-    obstacles.clear();
+void Level::loadPolygonsFromMap(const std::string &mapName,std::vector<Polygon> &obs, const char *filename) {
+    obs.clear();
 
     // Define the file path for the polygon data
-    std::string filePath = std::string(MAPS_DIRECTORY) + mapName + "/" + POLYGONS_FILE;
+    std::string filePath = std::string(MAPS_DIRECTORY) + mapName + "/" + filename;//POLYGONS_FILE;
 
     std::ifstream file(filePath);
 
@@ -47,11 +51,11 @@ void Level::loadPolygonsFromMap(const std::string &mapName) {
                 iss >> dummy;
             }
             // Add the completed polygon to the obstacles vector
-            obstacles.emplace_back(vertices);
+            obs.emplace_back(vertices);
         }
 
         file.close();
-        std::cout << "Loaded " << obstacles.size() << " polygons from the map " << mapName << "." << std::endl;
+        std::cout << "Loaded " << obs.size() << " polygons from the map " << mapName << "." << std::endl;
     } else {
         std::cerr << "Unable to open the file." << std::endl;
     }

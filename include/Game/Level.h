@@ -11,6 +11,7 @@
 // Define constants for directories and file names
 constexpr char MAPS_DIRECTORY[] = "../assets/maps/";
 constexpr char POLYGONS_FILE[] = "polygons.txt";
+constexpr char DANGER_FILE[] = "dangerPolygons.txt";
 
 
 /**
@@ -36,6 +37,11 @@ public:
      * @return A vector of Polygon.
      */
     [[nodiscard]] std::vector<Polygon> getObstacles() const;
+    /**
+    * @brief Return the danngerObstacles attribute.
+    * @return A vector of Polygon.
+    */
+    [[nodiscard]] std::vector<Polygon> getDangerObstacles() const;
 
 
 private:
@@ -43,14 +49,18 @@ private:
 
     std::vector<Polygon> obstacles; /**< Collection of polygons representing obstacles. */
 
+    std::vector<Polygon> dangerObstacles;/**< Collection of polygons representing obstacles that will be the danger. */
 
     /** PRIVATE METHODS **/
 
     /**
      * @brief Loads obstacles from a map file.
      * @param mapName The name of the map file.
+     * @param obstacles The type of obstacles that we want to load
+     * @param filename The name of the obstacles file
      */
-    void loadPolygonsFromMap(const std::string &mapName);
+    void loadPolygonsFromMap(const std::string &mapName,std::vector<Polygon> &obstacles, const char *filename);
+
 
 };
 

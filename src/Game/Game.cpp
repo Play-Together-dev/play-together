@@ -259,6 +259,20 @@ void Game::handleCollisions(int direction, float moveY, float &moveX) {
             }
         }
 
+
+        //Check collision with danger obstacles
+        for (const Polygon &obstacle: level.getDangerObstacles()) {
+
+            if (checkCollision(player.getVerticesGround(),obstacle)
+            || checkCollision(player.getVerticesRoof(),obstacle)
+            || checkCollision(player.getVerticesLeft(),obstacle)
+            || checkCollision(player.getVerticesRight(),obstacle)){
+                player.setCanMove(false);
+                removeCharacter(player);
+            }
+
+    }
+
         /*
         // Check for collisions with other characters
         for (Player const &character : characters) {
@@ -369,6 +383,17 @@ void Game::render() {
     // Draw the obstacles
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     for (const Polygon &obstacle: level.getObstacles()) {
+        for (size_t i = 0; i < obstacle.getVertices().size(); ++i) {
+            std::vector<Point> vertices = obstacle.getVertices();
+            const auto &vertex1 = vertices[i];
+            const auto &vertex2 = vertices[(i + 1) % vertices.size()];
+            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY());
+        }
+    }
+
+    //Draw the danger obstacles
+    SDL_SetRenderDrawColor(renderer, 0, 105, 180, 255);
+    for (const Polygon &obstacle: level.getDangerObstacles()) {
         for (size_t i = 0; i < obstacle.getVertices().size(); ++i) {
             std::vector<Point> vertices = obstacle.getVertices();
             const auto &vertex1 = vertices[i];
