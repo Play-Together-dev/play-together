@@ -267,12 +267,20 @@ void Game::handleCollisions(int direction, float moveY, float &moveX) {
                 || checkCollision(player.getVerticesRoof(), obstacle)
                 || checkCollision(player.getVerticesLeft(), obstacle)
                 || checkCollision(player.getVerticesRight(), obstacle)) {
-                std::cout << "player collide" << std::endl;
-                player.setCanMove(false);
-                std::cout << player.getCanMove() << std::endl;
-                teleportPlayer(camera.getX()/2,camera.getY());
+                //player.setCanMove(false);
+                //std::cout << player.getCanMove() << std::endl;
+                //teleportPlayer(camera.getX()/2,camera.getY());
+
                 //ideal here would be initial save place
-                //removeCharacter(player);
+
+                int err = SDL_RenderClear(renderer);
+                if(err != 0) {
+                    std::cout<< SDL_GetError()<<std::endl;
+                    exit(1);
+                }
+                player.setH(0);
+                player.setW(0);
+                render();
             }
         }
 
