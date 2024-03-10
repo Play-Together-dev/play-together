@@ -263,15 +263,20 @@ void Game::handleCollisions(int direction, float moveY, float &moveX) {
         //Check collision with danger obstacles
         for (const Polygon &obstacle: level.getDangerObstacles()) {
 
-            if (checkCollision(player.getVerticesGround(),obstacle)
-            || checkCollision(player.getVerticesRoof(),obstacle)
-            || checkCollision(player.getVerticesLeft(),obstacle)
-            || checkCollision(player.getVerticesRight(),obstacle)){
+            if (checkCollision(player.getVerticesGround(), obstacle)
+                || checkCollision(player.getVerticesRoof(), obstacle)
+                || checkCollision(player.getVerticesLeft(), obstacle)
+                || checkCollision(player.getVerticesRight(), obstacle)) {
+                std::cout << "player collide" << std::endl;
                 player.setCanMove(false);
-                removeCharacter(player);
+                std::cout << player.getCanMove() << std::endl;
+                teleportPlayer(camera.getX()/2,camera.getY());
+                //ideal here would be initial save place
+                //removeCharacter(player);
             }
+        }
 
-    }
+
 
         /*
         // Check for collisions with other characters
