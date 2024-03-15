@@ -269,6 +269,7 @@ void Game::handleCollisions(int direction, float moveY, float &moveX) {
                 || checkCollision(player.getVerticesRight(), obstacle)) {
                 //player.setCanMove(false);
                 //std::cout << player.getCanMove() << std::endl;
+                
                 //teleportPlayer(camera.getX()/2,camera.getY());
 
                 //ideal here would be initial save place
