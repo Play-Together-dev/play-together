@@ -45,7 +45,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *args[]) {
 
     // Initialize Game
     Camera camera = Camera();
-    Level level("diversity");
+    Level level("newWorld");
     Player initialPlayer(50, 50, 0.2F, 2, 20, 30);
     Game game(window, renderer, camera, level, initialPlayer);
 

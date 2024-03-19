@@ -10,6 +10,7 @@
 Level::Level(const std::string &map_name) {
     loadPolygonsFromMap(map_name,obstacles,POLYGONS_FILE);
     loadPolygonsFromMap(map_name,dangerObstacles,DANGER_FILE);
+    loadPolygonsFromMap(map_name,specialBoxes,BOXES_FILE);
 }
 
 
@@ -20,6 +21,9 @@ std::vector<Polygon> Level::getObstacles() const{
 }
 std::vector<Polygon> Level::getDangerObstacles() const {
     return dangerObstacles;
+}
+std::vector<Polygon> Level::getSpecialBoxes() const {
+    return specialBoxes;
 }
 
 

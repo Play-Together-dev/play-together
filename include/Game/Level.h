@@ -12,7 +12,7 @@
 constexpr char MAPS_DIRECTORY[] = "../assets/maps/";
 constexpr char POLYGONS_FILE[] = "polygons.txt";
 constexpr char DANGER_FILE[] = "dangerPolygons.txt";
-
+constexpr char BOXES_FILE[] = "boxes.txt";
 
 /**
  * @file Level.h
@@ -38,10 +38,16 @@ public:
      */
     [[nodiscard]] std::vector<Polygon> getObstacles() const;
     /**
-    * @brief Return the danngerObstacles attribute.
+    * @brief Return the dangerObstacles attribute.
     * @return A vector of Polygon.
     */
     [[nodiscard]] std::vector<Polygon> getDangerObstacles() const;
+    /**
+    * @brief Return the specialBoxes attribute.
+    * @return A vector of Polygon.
+    */
+    [[nodiscard]] std::vector<Polygon> getSpecialBoxes() const;
+
 
 
 private:
@@ -51,6 +57,7 @@ private:
 
     std::vector<Polygon> dangerObstacles;/**< Collection of polygons representing obstacles that will be the danger. */
 
+    std::vector<Polygon> specialBoxes;/**< Collection of polygons representing special Boxes with power. */
     /** PRIVATE METHODS **/
 
     /**

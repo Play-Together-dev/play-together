@@ -254,8 +254,12 @@ void Game::handleCollisions() {
                 player.setTimeSpeed(0);
             }
         }
+        //if it gets in contact with the danger obstacles he dissapears
+        checks(level.getDangerObstacles(), &Game::playerChange, *this,0,0);
+        //if it gets in contact with the danger obstacles he gets smaller  and if we want him bigger we can just change the values to *2
+        checks(level.getSpecialBoxes(), &Game::playerChange, *this,player.getH()/2,player.getW()/2);
 
-
+/*
         //Check collision with danger obstacles
         for (const Polygon &obstacle: level.getDangerObstacles()) {
 
@@ -279,7 +283,7 @@ void Game::handleCollisions() {
                 player.setW(0);
                 render();
             }
-        }
+        }*/
 
 
 
@@ -411,6 +415,17 @@ void Game::render() {
             SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY());
         }
     }
+    /*SDL_FRect boxRec = {vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY()};
+            SDL_RenderFillRectF(renderer, &boxRec);*/
+    SDL_SetRenderDrawColor(renderer, 0, 255, 180, 255);
+    for (const Polygon &obstacle: level.getSpecialBoxes()) {
+        for (size_t i = 0; i < obstacle.getVertices().size(); ++i) {
+            std::vector<Point> vertices = obstacle.getVertices();
+            const auto &vertex1 = vertices[i];
+            const auto &vertex2 = vertices[(i + 1) % vertices.size()];
+            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY());
+        }
+    }
 
     // Draw the camera point
     if (render_camera_point) {
@@ -512,3 +527,27 @@ void Game::stop() {
     player.setX(50);
     player.setY(50);
 }
+
+void Game::checks(const std::vector<Polygon>& polygons,void (Game::*func)(float,float),Game game,float h,float w) {
+    for (const Polygon &obstacle: polygons) {
+        if (checkCollision(player.getVerticesGround(), obstacle)
+            || checkCollision(player.getVerticesRoof(), obstacle)
+            || checkCollision(player.getVerticesLeft(), obstacle)
+            || checkCollision(player.getVerticesRight(), obstacle)) {
+            (game.*func)(h,w);
+        }
+    }
+}
+
+void Game:: playerChange(float h,float w){
+    int err = SDL_RenderClear(renderer);
+    if(err != 0) {
+        std::cout<< SDL_GetError()<<std::endl;
+        exit(1);
+    }
+    player.setH(h);
+    player.setW(w);
+    render();
+}
+
+
