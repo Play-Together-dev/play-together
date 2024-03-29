@@ -548,47 +548,11 @@ void Game::stop() {
     player.setY(50);
 }
 
-/*
-void Game::checks(const std::vector<Polygon>& polygons,void (Game::*func)(float,float),void (Game::*func2)(Polygon obs),Game& game,float h,float w) {
-    for (const Polygon &obstacle: polygons) {
-        if (checkCollision(player.getVerticesGround(), obstacle)
-            || checkCollision(player.getVerticesRoof(), obstacle)
-            || checkCollision(player.getVerticesLeft(), obstacle)
-            || checkCollision(player.getVerticesRight(), obstacle)) {
-            (game.*func)(h,w);
-            (game.*func2)(obstacle);
-        }
-    }
-}
-
-void Game :: playerSpecial(float h,float w,const SpecialBoxes& obs){
-    playerChange(h,w);
-
-   auto it = std::find(level.getSpecialBoxes().begin(), level.getSpecialBoxes().end(), obs);
-
-    // Check if the character was found
-    if (it != level.getSpecialBoxes().end()) {
-        // Erase the character from the vector
-        level.getSpecialBoxes().erase(it);
-    }
-
-}
 
 
 
 
-void Game:: playerChange(float h,float w){
-    int err = SDL_RenderClear(renderer);
-    if(err != 0) {
-        std::cout<< SDL_GetError()<<std::endl;
-        exit(1);
-    }
 
-    player.setH(h);
-    player.setW(w);
-    //std::cout <<"BEFORE" <<player.getW() << std::endl;
-    render();
-    //std::cout <<"AFTER"<< player.getW() << std::endl;
-}
 
-*/
+
+
