@@ -6,7 +6,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <ranges>
 #include "Polygon.h"
+#include "SpecialBoxes.h"
 
 // Define constants for directories and file names
 constexpr char MAPS_DIRECTORY[] = "../assets/maps/";
@@ -46,7 +48,12 @@ public:
     * @brief Return the specialBoxes attribute.
     * @return A vector of Polygon.
     */
-    [[nodiscard]] std::vector<Polygon> getSpecialBoxes() const;
+    [[nodiscard]] std::vector<SpecialBoxes> getSpecialBoxes() const;
+
+    /**
+     * @brief Removes the polygon
+     * */
+    void removeSpecialBoxe(const SpecialBoxes &box);
 
 
 
@@ -57,7 +64,7 @@ private:
 
     std::vector<Polygon> dangerObstacles;/**< Collection of polygons representing obstacles that will be the danger. */
 
-    std::vector<Polygon> specialBoxes;/**< Collection of polygons representing special Boxes with power. */
+    std::vector<SpecialBoxes> specialBoxes;/**< Collection of polygons representing special Boxes with power. */
     /** PRIVATE METHODS **/
 
     /**
@@ -67,6 +74,9 @@ private:
      * @param filename The name of the obstacles file
      */
     void loadPolygonsFromMap(const std::string &mapName,std::vector<Polygon> &obstacles, const char *filename);
+
+    //TODO: doc
+    void loadSpecialBoxesFroMap(const std::string &mapName,std::vector<SpecialBoxes> &boxes, const char *filename);
 
 
 };

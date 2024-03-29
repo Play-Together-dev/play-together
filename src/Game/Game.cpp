@@ -254,12 +254,7 @@ void Game::handleCollisions() {
                 player.setTimeSpeed(0);
             }
         }
-        //if it gets in contact with the danger obstacles he dissapears
-        checks(level.getDangerObstacles(), &Game::playerChange, *this,0,0);
-        //if it gets in contact with the danger obstacles he gets smaller  and if we want him bigger we can just change the values to *2
-        checks(level.getSpecialBoxes(), &Game::playerChange, *this,player.getH()/2,player.getW()/2);
 
-/*
         //Check collision with danger obstacles
         for (const Polygon &obstacle: level.getDangerObstacles()) {
 
@@ -283,7 +278,31 @@ void Game::handleCollisions() {
                 player.setW(0);
                 render();
             }
-        }*/
+        }
+
+        for (SpecialBoxes &box : level.getSpecialBoxes()) {
+
+            if (player.getX() > box.getX()
+                && player.getX() < box.getX()+box.getWidth()
+                && player.getY() > box.getY()
+                && player.getY() < box.getY()+box.getHight()){
+
+                int err = SDL_RenderClear(renderer);
+                if(err != 0) {
+                    std::cout<< SDL_GetError()<<std::endl;
+                    exit(1);
+                }
+                float nSizeH = player.getH() > 20 ? player.getH()/2 : player.getH()*2;
+                float nSizeW = player.getW() > 10 ? player.getW()/2 : player.getW()*2;
+
+                player.setH(nSizeH);
+                player.setW(nSizeW);
+
+                level.removeSpecialBoxe(box);
+
+                render();
+            }
+        }
 
 
 
@@ -358,8 +377,9 @@ void Game::render() {
 
     // Draw the characters
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    for (const Player &character : characters) {
-        SDL_FRect characterRect = {character.getX() - camera.getX(), character.getY() - camera.getY(), character.getW(), character.getH()};
+    for (const Player &character: characters) {
+        SDL_FRect characterRect = {character.getX() - camera.getX(), character.getY() - camera.getY(), character.getW(),
+                                   character.getH()};
         SDL_RenderFillRectF(renderer, &characterRect);
     }
 
@@ -401,7 +421,8 @@ void Game::render() {
             std::vector<Point> vertices = obstacle.getVertices();
             const auto &vertex1 = vertices[i];
             const auto &vertex2 = vertices[(i + 1) % vertices.size()];
-            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY());
+            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(),
+                                vertex2.x - camera.getX(), vertex2.y - camera.getY());
         }
     }
 
@@ -412,20 +433,19 @@ void Game::render() {
             std::vector<Point> vertices = obstacle.getVertices();
             const auto &vertex1 = vertices[i];
             const auto &vertex2 = vertices[(i + 1) % vertices.size()];
-            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY());
+            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(),
+                                vertex2.x - camera.getX(), vertex2.y - camera.getY());
         }
     }
     /*SDL_FRect boxRec = {vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY()};
             SDL_RenderFillRectF(renderer, &boxRec);*/
     SDL_SetRenderDrawColor(renderer, 0, 255, 180, 255);
-    for (const Polygon &obstacle: level.getSpecialBoxes()) {
-        for (size_t i = 0; i < obstacle.getVertices().size(); ++i) {
-            std::vector<Point> vertices = obstacle.getVertices();
-            const auto &vertex1 = vertices[i];
-            const auto &vertex2 = vertices[(i + 1) % vertices.size()];
-            SDL_RenderDrawLineF(renderer, vertex1.x - camera.getX(), vertex1.y - camera.getY(), vertex2.x - camera.getX(), vertex2.y - camera.getY());
-        }
+    for (SpecialBoxes obstacle: level.getSpecialBoxes()) {
+        SDL_FRect objRect = {obstacle.getX() - camera.getX(), obstacle.getY() - camera.getY(),
+                             obstacle.getWidth(), obstacle.getHight()};
+        SDL_RenderFillRectF(renderer, &objRect);
     }
+
 
     // Draw the camera point
     if (render_camera_point) {
@@ -528,16 +548,34 @@ void Game::stop() {
     player.setY(50);
 }
 
-void Game::checks(const std::vector<Polygon>& polygons,void (Game::*func)(float,float),Game game,float h,float w) {
+/*
+void Game::checks(const std::vector<Polygon>& polygons,void (Game::*func)(float,float),void (Game::*func2)(Polygon obs),Game& game,float h,float w) {
     for (const Polygon &obstacle: polygons) {
         if (checkCollision(player.getVerticesGround(), obstacle)
             || checkCollision(player.getVerticesRoof(), obstacle)
             || checkCollision(player.getVerticesLeft(), obstacle)
             || checkCollision(player.getVerticesRight(), obstacle)) {
             (game.*func)(h,w);
+            (game.*func2)(obstacle);
         }
     }
 }
+
+void Game :: playerSpecial(float h,float w,const SpecialBoxes& obs){
+    playerChange(h,w);
+
+   auto it = std::find(level.getSpecialBoxes().begin(), level.getSpecialBoxes().end(), obs);
+
+    // Check if the character was found
+    if (it != level.getSpecialBoxes().end()) {
+        // Erase the character from the vector
+        level.getSpecialBoxes().erase(it);
+    }
+
+}
+
+
+
 
 void Game:: playerChange(float h,float w){
     int err = SDL_RenderClear(renderer);
@@ -545,9 +583,12 @@ void Game:: playerChange(float h,float w){
         std::cout<< SDL_GetError()<<std::endl;
         exit(1);
     }
+
     player.setH(h);
     player.setW(w);
+    //std::cout <<"BEFORE" <<player.getW() << std::endl;
     render();
+    //std::cout <<"AFTER"<< player.getW() << std::endl;
 }
 
-
+*/

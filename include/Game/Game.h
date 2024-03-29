@@ -206,7 +206,7 @@ private:
      * the function passes in parameter
     *TODO : not done yet
     */
-    void checks(const std::vector<Polygon>& polygons,void (Game::*func)(float,float),Game game,float h,float w);
+    void checks(const std::vector<SpecialBoxes>& polygons,void (Game::*func)(float,float),void (Game::*func2)(SpecialBoxes obs),Game& game,float h,float w);
 
     /**
      * @brief changes the image of the player and redraw him with his new dimensions
@@ -214,6 +214,9 @@ private:
      * @param w the new width of the player
      * */
     void playerChange(float h,float w);
+
+    //TODO : commet
+    void playerSpecial(float h,float w,const SpecialBoxes& obs);
 
 };
 

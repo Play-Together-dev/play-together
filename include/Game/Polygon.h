@@ -21,7 +21,7 @@ public:
     Polygon(const std::vector<Point> &vertices);
 
 
-    /** ACCESSORS **/
+/** ACCESSORS **/
 
     [[nodiscard]] std::vector<Point> getVertices() const;
 

@@ -46,7 +46,8 @@ endforeach()
 file(COPY ${ASSETS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets)
 
 # Create the executable
-add_executable(play-together WIN32 ${SOURCES} ${HEADERS})
+add_executable(play-together WIN32 ${SOURCES} ${HEADERS}
+        src/Game/SpecialBoxes.cpp)
 
 # Link libraries
 target_link_libraries(play-together ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_GFX_LIBRARY})
