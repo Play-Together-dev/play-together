@@ -17,5 +17,6 @@
     ],
     "cinematicZones": [],
     "bossZones": [],
-    "eventZones": []
+    "eventZones": [],
+    "deathObstacles": [[90, 150], [500, 200], [500, 145], [90, 145]]
 }

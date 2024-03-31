@@ -158,7 +158,6 @@ void Game::handleKeyDownEvent(Player *player, const SDL_KeyboardEvent& keyEvent)
         case SDL_SCANCODE_SPACE:
             // If the player is dead ignore
             if (player == nullptr) break;
-
             // If the coyote time is passed and the player is not already in a jump
             if (player->getTimeAfterFall() > 0 && !player->getIsJumping()) {
                 player->setWantToJump(true);
@@ -350,11 +349,37 @@ void Game::handleCollisionsWithObstacles(Player *player) const {
         // If collision detected with the ground, the player is on a platform
         if (!player->getIsOnPlatform() && checkCollision(player->getVerticesGround(), obstacle)) {
             player->setIsOnPlatform(true);
+            // If collision detected with the wall, the player can't move
+            if (player->getCanMove() && checkCollision(player->getVerticesHorizontal(), obstacle)) {
+                player->setCanMove(false);
+                player->setTimeSpeed(0);
+            }
         }
-        // If collision detected with the wall, the player can't move
-        if (player->getCanMove() && checkCollision(player->getVerticesHorizontal(), obstacle)) {
-            player->setCanMove(false);
-            player->setTimeSpeed(0);
+    }
+}
+
+void Game::handleCollisionsWithSpecialBox(Player *player) {
+    for (SpecialBoxes &box : level.getSpecialBoxes()) {
+
+        if (player->getX() > box.getX()
+            && player->getX() < box.getX()+box.getWidth()
+            && player->getY() > box.getY()
+            && player->getY() < box.getY()+box.getHight()){
+
+            int err = SDL_RenderClear(renderer);
+            if(err != 0) {
+                std::cout<< SDL_GetError()<<std::endl;
+                exit(1);
+            }
+            float nSizeH = player->getH() > MINHIGHT ? player->getH()/2 : player->getH()*2;
+            float nSizeW = player->getW() > MINWHIDTH ? player->getW()/2 : player->getW()*2;
+
+            player->setH(nSizeH);
+            player->setW(nSizeW);
+
+            std::cout<<"chercks for collision"<<std::endl;
+
+            level.removeSpecialBoxe(box);
         }
     }
 }
@@ -557,7 +582,9 @@ void Game::handleCollisions() {
         handleCollisionsWithOtherPlayers(&character); // Check collisions with other players
         handleCollisionsWithDeathZone(&character); // Check collisions with death zones
         handleCollisionsWithPlatforms(&character); // Check collisions with platforms
+        handleCollisionsWithSpecialBox(&character); // Check collisions with special boxes
         handleCollisionsWithCameraBorders(&character); // Check collisions with camera borders
+
     }
 }
 
@@ -691,9 +718,18 @@ void Game::render() {
 
         level.renderPolygonsDebug(renderer, cam); // Draw the obstacles
         level.renderPlatformsDebug(renderer, cam); // Draw the platforms
+        level.renderPlatformsDebug(renderer,cam); //Draw the dangerus
     }
 
+
     // DEBUG DRAWING OF APPLICATION CONSOLE :
+    SDL_SetRenderDrawColor(renderer, 0, 255, 180, 255);
+    for (SpecialBoxes obstacle: level.getSpecialBoxes()) {
+        SDL_FRect objRect = {obstacle.getX() - camera.getX(), obstacle.getY() - camera.getY(),
+                             obstacle.getWidth(), obstacle.getHight()};
+        SDL_RenderFillRectF(renderer, &objRect);
+    }
+
 
     // Draw the camera point if enabled
     if (render_camera_point) camera.renderCameraPoint(renderer, getAveragePlayersPositions());
@@ -772,6 +808,7 @@ void Game::run() {
     while (gameState == GameState::RUNNING) {
         // Handle events, calculate player movement, check collisions, apply player movement, apply camera movement and render
         handleEvents();
+
         if (enable_platforms_movement) level.applyPlatformsMovement();
         calculateAllPlayerMovement();
         switchGravity ? handleCollisionsReversedMavity() : handleCollisions();
@@ -808,3 +845,4 @@ void Game::sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMaskPtr) {
         *lastKeyboardStateMaskPtr = currentKeyboardStateMask;
     }
 }
+

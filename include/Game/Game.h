@@ -15,6 +15,8 @@
 #include "../Utils/Mediator.h"
 
 const float DISTANCE_OUT_MAP_BEFORE_DEATH = 500;
+constexpr int MINHIGHT = 20;
+constexpr int MINWHIDTH = 30;
 
 /**
  * @file Game.h
@@ -167,8 +169,9 @@ public:
     void handleKeyDownEvent(Player *player, const SDL_KeyboardEvent& keyEvent);
 
 
+
     /**
-     * @brief Serialize the game object
+     * @brief method to serialize the game object
      * @tparam Archive
      * @param ar
      * @param version
@@ -254,6 +257,10 @@ private:
      * @brief Handles collisions between the player and platforms.
      */
     void handleCollisionsWithPlatforms(Player *player) const;
+    /**
+     * @brief Handles collisions between the player and special boxes.
+     */
+    void handleCollisionsWithSpecialBox(Player *player);
 
     /**
      * @brief Handles collisions between the player and other players.
@@ -301,14 +308,13 @@ private:
      * @brief Renders the game by drawing all the game textures and sprites.
      */
     void render();
-
-
     /** STATIC METHODS **/
 
     /**
      * @brief Sends the keyboard state to the network.
      */
     static void sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMask);
+
 };
 
 #endif //PLAY_TOGETHER_GAME_H

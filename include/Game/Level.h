@@ -5,7 +5,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <ranges>
 #include "Polygon.h"
+#include "Objects/SpecialBoxes.h"
 #include "Camera.h"
 #include "Objects/MovingPlatform1D.h"
 #include "Objects/MovingPlatform2D.h"
@@ -14,6 +16,7 @@
 
 // Define constants for directories and file names
 constexpr char MAPS_DIRECTORY[] = "../assets/maps/";
+constexpr char BOXES_FILE[] = "boxes.txt";
 
 
 /**
@@ -104,6 +107,18 @@ public:
      * @param camera The camera associated to the current game
      */
     void renderPlatformsDebug(SDL_Renderer *renderer, Point camera) const;
+    /**
+    * @brief Return the specialBoxes attribute.
+    * @return A vector of Polygon.
+    */
+    [[nodiscard]] std::vector<SpecialBoxes> getSpecialBoxes() const;
+
+    /**
+     * @brief Removes the Special box
+     * */
+    void removeSpecialBoxe(const SpecialBoxes &box) ;
+
+
 
 
 private:
@@ -122,11 +137,11 @@ private:
     std::vector<MovingPlatform1D> movingPlatforms1D; /**< Collection of MovingPlatform1D representing 1D platforms. */
     std::vector<MovingPlatform2D> movingPlatforms2D; /**< Collection of MovingPlatform2D representing 2D platforms. */
     std::vector<SwitchingPlatform> switchingPlatforms; /**< Collection of switchingPlatform representing switching platforms. */
-
-
+    std::vector<SpecialBoxes> specialBoxes;/**< Collection of polygons representing special Boxes with power. */
     /** PRIVATE METHODS **/
 
     /**
+
      * @brief Load the properties of the map.
      * @param mapName Represents the name of the map file.
      */
@@ -152,6 +167,11 @@ private:
      * @param mapName Represents the name of the map.
      */
     void loadPlatformsFromMap(const std::string& mapName);
+    /**
+    * @brief Load the platforms from a map. (1D, 2D and switching platforms)
+    * @param mapName Represents the name of the map.
+    */
+    void loadSpecialBoxesFroMap(const std::string& mapName);
 };
 
 #endif //PLAY_TOGETHER_LEVEL_H

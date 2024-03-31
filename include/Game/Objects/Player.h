@@ -182,7 +182,6 @@ public:
      * @return A vector of Point representing vertices, with added margin to capture wall within the area.
      */
     [[nodiscard]] std::vector<Point> getVerticesHorizontal() const;
-
     /**
      * @brief Gets the vertices of the player's bounding box, adjusted to capture the ground.
      * @return A vector of Point representing vertices, with added margin to capture ground within the area.

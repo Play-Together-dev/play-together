@@ -13,6 +13,7 @@ Level::Level(const std::string &map_name) {
     loadMapProperties(map_name);
     loadPolygonsFromMap(map_name);
     loadPlatformsFromMap(map_name);
+    loadSpecialBoxesFroMap(map_name);
 }
 
 
@@ -49,6 +50,11 @@ std::vector<MovingPlatform2D> Level::getMovingPlatforms2D() const {
 std::vector<SwitchingPlatform> Level::getSwitchingPlatforms() const {
     return switchingPlatforms;
 }
+std::vector<SpecialBoxes> Level::getSpecialBoxes() const{
+    return specialBoxes;
+}
+
+
 
 
 /** METHODS **/
@@ -60,7 +66,8 @@ void Level::renderPolygonsDebug(SDL_Renderer *renderer, Point camera) const {
             std::vector<Point> vertices = obstacle.getVertices();
             const auto &vertex1 = vertices[i];
             const auto &vertex2 = vertices[(i + 1) % vertices.size()];
-            SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x, vertex2.y - camera.y);
+            SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x,
+                                vertex2.y - camera.y);
         }
     }
 
@@ -70,10 +77,13 @@ void Level::renderPolygonsDebug(SDL_Renderer *renderer, Point camera) const {
             std::vector<Point> vertices = obstacle.getVertices();
             const auto &vertex1 = vertices[i];
             const auto &vertex2 = vertices[(i + 1) % vertices.size()];
-            SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x, vertex2.y - camera.y);
+            SDL_RenderDrawLineF(renderer, vertex1.x - camera.x, vertex1.y - camera.y, vertex2.x - camera.x,
+                                vertex2.y - camera.y);
         }
     }
 }
+
+
 
 void Level::applyPlatformsMovement() {
     // Apply movement for 1D platforms
@@ -175,11 +185,15 @@ void Level::loadPolygonsFromMap(const std::string& mapFileName) {
         int bossZonesSize = loadPolygonsFromJson(j, "bossZones", bossZones, zoneType::BOSS);
         int eventZonesSize = loadPolygonsFromJson(j, "eventZones", eventZones, zoneType::EVENT);
 
-        std::cout << "Level: Loaded " << collisionZoneSize << " collision zones, " << iceZonesSize << " ice zones, " << sandZonesSize << " sand zones, " << deathZonesSize << " death zones, " << cinematicZonesSize << " cinematic zones, " << bossZonesSize << " boss zones, " << eventZonesSize << " event zones." << std::endl;
+        std::cout << "Level: Loaded " << collisionZoneSize << " collision zones, "
+        << iceZonesSize << " ice zones, " << sandZonesSize << " sand zones, "
+        << deathZonesSize << " death zones, " << cinematicZonesSize << " cinematic zones, "
+        << bossZonesSize << " boss zones, " << eventZonesSize << " event zones,"<< std::endl;
     } else {
         std::cerr << "Level: Unable to open the polygons file. Please check the file path." << std::endl;
     }
 }
+
 
 void Level::loadPlatformsFromMap(const std::string& mapFileName) {
     std::string filePath = std::string(MAPS_DIRECTORY) + mapFileName + "/platforms.json";
@@ -231,5 +245,52 @@ void Level::loadPlatformsFromMap(const std::string& mapFileName) {
         std::cout << "Level: Loaded " << movingPlatforms1D.size() << " 1D moving platforms, " << movingPlatforms2D.size() << " 2D moving platforms and " << switchingPlatforms.size() << " switching platforms." << std::endl;
     } else {
         std::cerr << "Level: Unable to open the platforms file. Please check the file path." << std::endl;
+    }
+}
+
+void Level ::loadSpecialBoxesFroMap(const std::string &mapName) {
+    specialBoxes.clear();
+
+    // Define the file path for the polygon data
+    std::string filePath = std::string(MAPS_DIRECTORY) + mapName + "/" + BOXES_FILE;//POLYGONS_FILE;
+
+    std::ifstream file(filePath);
+
+    if (file.is_open()) {
+        std::string line;
+
+        // Read each line from the file
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            char dummy;
+            SpecialBoxes box;
+            // Extract points from each line
+            while (iss >> dummy >> std::ws && dummy == '(') {
+                float x;
+                float y;
+                float h;
+                float w;
+                iss >> x >> dummy >> y >> dummy>> h >> dummy>> w >> dummy;
+                box = SpecialBoxes(x,y,h,w);
+                iss >> dummy;
+            }
+            // Add the completed polygon to the obstacles vector
+            specialBoxes.emplace_back(box);
+        }
+
+        file.close();
+        std::cout << "Loaded " << specialBoxes.size() << " special boxes from the map " << mapName << "." << std::endl;
+    } else {
+        std::cerr << "Unable to open the file." << std::endl;
+    }
+
+
+}
+
+void Level::removeSpecialBoxe(const SpecialBoxes &box) {
+    auto it = std::find(specialBoxes.begin(), specialBoxes.end(), box);
+    // If an element is found, erase it
+    if (it != specialBoxes.end()) {
+        specialBoxes.erase(it);
     }
 }
