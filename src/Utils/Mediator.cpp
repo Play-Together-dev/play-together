@@ -59,10 +59,6 @@ void Mediator::stopClients() {
     Mediator::networkManagerPtr->stopClients();
 }
 
-void Mediator::temporarySendMethod(const std::string &message) {
-    Mediator::networkManagerPtr->temporarySendMethod(message);
-}
-
 void Mediator::sendPlayerUpdate(uint16_t keyboardStateMask) {
     // If the server is not running, return
     Mediator::networkManagerPtr->sendPlayerUpdate(keyboardStateMask);
@@ -76,12 +72,21 @@ GameState Mediator::getGameState() {
     return gamePtr->getGameState();
 }
 
-void Mediator::initializeGame() {
-    gamePtr->initialize();
+void Mediator::initializeGame(int slot) {
+    gamePtr->initialize(slot);
 }
 
 void Mediator::stop() {
     gamePtr->stop();
+}
+
+void Mediator::save() {
+    gamePtr->saveGame();
+}
+
+void Mediator::getGameProperties(nlohmann::json &properties) {
+    properties["mapName"] = gamePtr->getLevel().getMapName();
+    properties["lastCheckpoint"] = gamePtr->getLevel().getLastCheckpoint();
 }
 
 int Mediator::handleClientConnect(int playerID) {
@@ -96,7 +101,8 @@ int Mediator::handleClientConnect(int playerID) {
     // Get the player's position id based on his position in the players list
 
     size_t spawnIndex = gamePtr->getCharacters().size();
-    Point spawnPoint = gamePtr->getLevel().getSpawnPoints()[spawnIndex];
+    Level level = gamePtr->getLevel();
+    Point spawnPoint = level.getSpawnPoints(level.getLastCheckpoint())[spawnIndex];
     Player newPlayer(playerID, spawnPoint, 0.2F, 2, 48, 36);
     gamePtr->addCharacter(newPlayer);
 
@@ -150,7 +156,8 @@ void Mediator::handleMessages(int protocol, const std::string &rawMessage, int p
 
         // Get the player's spawn point based on his position in the players list
         size_t spawnIndex = gamePtr->getCharacters().size();
-        Point spawnPoint = gamePtr->getLevel().getSpawnPoints()[spawnIndex];
+        Level level = gamePtr->getLevel();
+        Point spawnPoint = level.getSpawnPoints(level.getLastCheckpoint())[spawnIndex];
 
         gamePtr->addCharacter(Player(playerSocketID, spawnPoint, 0.2F, 2, 48, 36));
         std::cout << "Mediator: Player " << playerSocketID << " added to the game" << std::endl;
@@ -162,6 +169,12 @@ void Mediator::handleMessages(int protocol, const std::string &rawMessage, int p
         std::cout << "Mediator: Player " << playerSocketID << " removed from the game" << std::endl;
     }
 
+    else if (messageType == "gameProperties") {
+        std::cout << "Mediator: Game properties received: " << message << std::endl;
+        gamePtr->setLevel(message["mapName"]);
+        gamePtr->getLevel().setLastCheckpoint(message["lastCheckpoint"]);
+    }
+
     else if (messageType == "playerList") {
         std::cout << "Mediator: Players list received: " << message["players"] << std::endl;
 
@@ -169,7 +182,8 @@ void Mediator::handleMessages(int protocol, const std::string &rawMessage, int p
         size_t spawnIndex = gamePtr->getCharacters().size();
         for (const auto &player : playersArray) {
 
-            Point spawnPoint = gamePtr->getLevel().getSpawnPoints()[spawnIndex];
+            Level level = gamePtr->getLevel();
+            Point spawnPoint = level.getSpawnPoints(level.getLastCheckpoint())[spawnIndex];
             Player newPlayer(player, spawnPoint, 0.2F, 2, 48, 36);
 
             if (player == -1) newPlayer.setSpriteTextureByID(3);

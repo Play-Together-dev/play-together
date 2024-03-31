@@ -19,6 +19,7 @@ constexpr char MAPS_DIRECTORY[] = "../assets/maps/";
 constexpr char BOXES_FILE[] = "boxes.txt";
 
 
+
 /**
  * @file Level.h
  * @brief Defines the Level class responsible for level object.
@@ -54,19 +55,14 @@ public:
      * @brief Return the spawn points of the map.
      * @return A vector of Point representing the spawn points of the map.
      */
-    [[nodiscard]] std::array<Point, 4> getSpawnPoints() const;
+    [[nodiscard]] std::array<Point, 4> getSpawnPoints(int index) const;
 
     /**
-     * @brief Return the collisionZones attribute.
+     * @brief Return the zones of a specific type.
+     * @param type Represents the type of zone.
      * @return A vector of Polygon.
      */
-    [[nodiscard]] std::vector<Polygon> getCollisionZones() const;
-
-    /**
-     * @brief Return the iceZones attribute.
-     * @return A vector of Polygon.
-     */
-    [[nodiscard]] std::vector<Polygon> getDeathZones() const;
+    [[nodiscard]] std::vector<Polygon> getZones(zoneType type) const;
 
     /**
      * @brief Return the movingPlatform attribute.
@@ -85,6 +81,21 @@ public:
      * @return A vector of SwitchingPlatform.
      */
     [[nodiscard]] std::vector<SwitchingPlatform> getSwitchingPlatforms() const;
+
+    /**
+     * @brief Return the last checkpoint reached by the player.
+     * @return A short representing the last checkpoint reached by the player.
+     */
+    [[nodiscard]] short getLastCheckpoint() const;
+
+
+    /** MODIFIERS **/
+
+    /**
+     * @brief Set the last checkpoint reached by the player.
+     * @param checkpoint Represents the last checkpoint reached by the player.
+     */
+    void setLastCheckpoint(short checkpoint);
 
 
     /** PUBLIC METHODS **/
@@ -126,7 +137,7 @@ private:
 
     int mapID = 0; /**< Represents the ID of the map. */
     std::string mapName; /**< Represents the name of the map. */
-    std::array<Point, 4> spawnPoints = {}; /**< Represents the spawn points of the map. */
+    std::vector<std::array<Point, 4>> spawnPoints; /**< Represents the spawn points of the map. */
     std::vector<Polygon> collisionZones; /**< Collection of polygons representing obstacles. */
     std::vector<Polygon> iceZones; /**< Collection of polygons representing ice zones. */
     std::vector<Polygon> sandZones; /**< Collection of polygons representing sand zones. */
@@ -134,10 +145,14 @@ private:
     std::vector<Polygon> cinematicZones; /**< Collection of polygons representing cinematic zones. */
     std::vector<Polygon> bossZones; /**< Collection of polygons representing boss zones. */
     std::vector<Polygon> eventZones; /**< Collection of polygons representing event zones. */
+    std::vector<Polygon> saveZones; /**< Collection of polygons representing save zones. */
     std::vector<MovingPlatform1D> movingPlatforms1D; /**< Collection of MovingPlatform1D representing 1D platforms. */
     std::vector<MovingPlatform2D> movingPlatforms2D; /**< Collection of MovingPlatform2D representing 2D platforms. */
     std::vector<SwitchingPlatform> switchingPlatforms; /**< Collection of switchingPlatform representing switching platforms. */
+
     std::vector<SpecialBoxes> specialBoxes;/**< Collection of polygons representing special Boxes with power. */
+
+    short lastCheckpoint = 0; /**< Represents the last checkpoint reached by the player. */
     /** PRIVATE METHODS **/
 
     /**
