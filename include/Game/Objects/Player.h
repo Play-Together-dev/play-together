@@ -15,6 +15,9 @@ const int PLAYER_LEFT = -1; /**< Constant to the direction of the player here le
 const float PRESSURE_JUMP_MIN = 4; /**< Constant for the jump time limit minimum. */
 const float PRESSURE_JUMP_MAX = 7; /**< Constant for jump time limit. */
 constexpr float COYOTE_TIME = 2; /**< Time allowed for jumping after a fall. */
+constexpr int MIN_HIGHT = 20;
+constexpr int MIN_WHIDTH = 30;
+
 
 /**
  * @file Player.h

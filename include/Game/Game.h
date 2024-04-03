@@ -15,8 +15,6 @@
 #include "../Utils/Mediator.h"
 
 const float DISTANCE_OUT_MAP_BEFORE_DEATH = 500;
-constexpr int MINHIGHT = 20;
-constexpr int MINWHIDTH = 30;
 
 /**
  * @file Game.h

@@ -25,3 +25,16 @@ bool SpecialBoxes::operator==(SpecialBoxes& box) const{
             && this->hight == box.getHight();
 }
 
+void SpecialBoxes::applySpecialBoxPower(Player *player) {
+    changeSize(player);
+}
+
+void SpecialBoxes::changeSize(Player* player){
+    float nSizeH = player->getH() > MIN_HIGHT ? player->getH()/2 : player->getH()*2;
+    float nSizeW = player->getW() > MIN_WHIDTH ? player->getW()/2 : player->getW()*2;
+
+    player->setH(nSizeH);
+    player->setW(nSizeW);
+
+}
+

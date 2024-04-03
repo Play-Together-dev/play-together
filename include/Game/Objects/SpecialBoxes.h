@@ -13,6 +13,7 @@ class SpecialBoxes {
         float y; // the vertical position
         float hight;
         float width;
+        void changeSize(Player* player);
     public:
 
         SpecialBoxes();
@@ -31,7 +32,7 @@ class SpecialBoxes {
         bool operator==(SpecialBoxes& box) const;
 
 
-       // void applySpecialBoxPower(Player player);
+       void applySpecialBoxPower(Player* player);
 
 };
 

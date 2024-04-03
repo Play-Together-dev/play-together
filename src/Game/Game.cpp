@@ -385,20 +385,7 @@ void Game::handleCollisionsWithSpecialBox(Player *player) {
             && player->getX() < box.getX()+box.getWidth()
             && player->getY() > box.getY()
             && player->getY() < box.getY()+box.getHight()){
-
-            int err = SDL_RenderClear(renderer);
-            if(err != 0) {
-                std::cout<< SDL_GetError()<<std::endl;
-                exit(1);
-            }
-            float nSizeH = player->getH() > MINHIGHT ? player->getH()/2 : player->getH()*2;
-            float nSizeW = player->getW() > MINWHIDTH ? player->getW()/2 : player->getW()*2;
-
-            player->setH(nSizeH);
-            player->setW(nSizeW);
-
-            std::cout<<"chercks for collision"<<std::endl;
-
+            box.applySpecialBoxPower(player);
             level.removeSpecialBoxe(box);
         }
     }
