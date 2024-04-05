@@ -184,6 +184,7 @@ public:
      */
     void saveGame();
 
+
 private:
     /** ATTRIBUTES **/
 
@@ -205,10 +206,17 @@ private:
     bool enable_platforms_movement = true;
 
     GameState gameState = GameState::STOPPED; /**< The current game state. */
+    static std::mutex lock_change;
 
+    typedef struct {
+        Player* player;
+        SpecialBoxes* box;
+        int state;
+    }GameData;
 
     /** PRIVATE METHODS **/
 
+    static void* timer(void* p);
     /**
      * @brief Handles SDL events, updating the movement variables accordingly.
      */
@@ -321,6 +329,7 @@ private:
      * @brief Sends the keyboard state to the network.
      */
     static void sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMask);
+
 
 };
 

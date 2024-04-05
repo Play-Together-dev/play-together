@@ -35,7 +35,7 @@ class SpecialBoxes {
         bool operator==(SpecialBoxes& box) const;
 
 
-       void applySpecialBoxPower(Player* player);
+       int applySpecialBoxPower(Player* player,int* state);
         [[nodiscard]] SDL_FRect getBoundingBox() const;
 
 };

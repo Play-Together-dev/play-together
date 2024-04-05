@@ -26,9 +26,15 @@ bool SpecialBoxes::operator==(SpecialBoxes& box) const{
             && this->hight == box.getHight();
 }
 
-void SpecialBoxes::applySpecialBoxPower(Player *player) {
-    srand(time(nullptr));
-    int state =  rand()%4;
+int SpecialBoxes::applySpecialBoxPower(Player *player,int* statePtr) {
+    int state;
+    if(statePtr == nullptr){
+        srand(time(nullptr));
+        state =  rand()%4;
+    }else{
+        state = *statePtr > 1 ? *statePtr : *statePtr+1%2;
+    }
+
     switch (state) {
         case 0:
             std::cout<<"case 0"<<std::endl;
@@ -49,6 +55,7 @@ void SpecialBoxes::applySpecialBoxPower(Player *player) {
         default:
             std::cout<<"a problem occurred during the rand in SpecialBoxAction"<<std::endl;
     }
+    return state;
 
 }
 

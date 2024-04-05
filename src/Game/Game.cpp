@@ -1,5 +1,8 @@
+#include <sys/wait.h>
+#include <thread>
 #include "../../include/Game/Game.h"
 
+std::mutex Game::lock_change;
 /**
  * @file Game.cpp
  * @brief Implements the Game class responsible for handling the main game logic.
@@ -138,6 +141,7 @@ void Game::initialize(int slot) {
         Player initialPlayer(-1, spawnPoint, 0.2F, 2, 48, 36);
         initialPlayer.setSpriteTextureByID(2);
         addCharacter(initialPlayer);
+
     }
 }
 
@@ -379,9 +383,20 @@ void Game::handleCollisionsWithObstacles(Player *player) const {
 }
 
 void Game::handleCollisionsWithSpecialBox(Player *player) {
+    pthread_t idThread[level.getSpecialBoxes().size()];
+    int count = 0;
     for (SpecialBoxes &box : level.getSpecialBoxes()) {
-    if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
-            box.applySpecialBoxPower(player);
+        if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
+            int state = box.applySpecialBoxPower(player, nullptr);
+            std::cout<<"done with the change and the state is "<<state<<std::endl;
+            GameData* data = static_cast<GameData *>(calloc(1, sizeof(GameData)));
+                   data->state = state;
+                   data->player=player;
+                   data->box = &box;
+            std::cout<<"done with the structure with state "<<data->state<<std::endl;
+            //std::thread t(timer,&data);
+            pthread_create(&idThread[count],NULL,timer,data);
+            count++;
             level.removeSpecialBoxe(box);
         }
     }
@@ -421,7 +436,7 @@ void Game::handleCollisionsWithPlatforms(Player *player) const {
         // If collision detected with the ground, the player is on the platform
         if (checkAABBCollision(player->getGroundColliderBoundingBox(), platform.getBoundingBox())) {
             player->setIsOnPlatform(true);
-            // Add platform velocity to the player by checking on which axis it moves
+            // Add platform velocity to the player by checking on which axis it movfffes
             platform.getAxis() ? player->setY(player->getY() + platform.getMove()) : player->setX(player->getX() + platform.getMove());
         }
         // If collision detected with the wall, the player can't move
@@ -892,3 +907,14 @@ void Game::sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMaskPtr) {
     }
 }
 
+ void* Game::timer(void* p)  {
+    GameData* data = (GameData*)p;
+    //lock_change.lock();
+     std::cout << "Wait for 4 seconds"<<std::endl;
+    sleep(4);
+    data->box->applySpecialBoxPower(data->player,&data->state);
+    std::cout << "done with waiting the state is "<<(data->state)<<std::endl;
+    //lock_change.unlock();
+    free(p);
+    pthread_exit(nullptr);
+}
