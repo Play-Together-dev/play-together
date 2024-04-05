@@ -380,11 +380,7 @@ void Game::handleCollisionsWithObstacles(Player *player) const {
 
 void Game::handleCollisionsWithSpecialBox(Player *player) {
     for (SpecialBoxes &box : level.getSpecialBoxes()) {
-
-        if (player->getX() > box.getX()
-            && player->getX() < box.getX()+box.getWidth()
-            && player->getY() > box.getY()
-            && player->getY() < box.getY()+box.getHight()){
+    if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
             box.applySpecialBoxPower(player);
             level.removeSpecialBoxe(box);
         }

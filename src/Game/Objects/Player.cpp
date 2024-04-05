@@ -254,6 +254,9 @@ void Player::setSpriteID(short id) {
     SpriteID = id;
 }
 
+void Player::setSpeed(float nSpeed){
+    this->speed = nSpeed;
+}
 
 /** METHODS **/
 

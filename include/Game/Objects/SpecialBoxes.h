@@ -13,6 +13,9 @@ class SpecialBoxes {
         float y; // the vertical position
         float hight;
         float width;
+        void getSlower(Player* player);
+        void getFaster(Player* player);
+        void changeFigure(Player* player);
         void changeSize(Player* player);
     public:
 
@@ -33,6 +36,7 @@ class SpecialBoxes {
 
 
        void applySpecialBoxPower(Player* player);
+        [[nodiscard]] SDL_FRect getBoundingBox() const;
 
 };
 

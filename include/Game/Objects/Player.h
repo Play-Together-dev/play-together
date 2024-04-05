@@ -331,6 +331,11 @@ public:
     * @param id The sprite ID to set (between 1 and 4).
     */
     void setSpriteID(short id);
+    /**
+     * @brief Set the player speed.
+     * @param nSpeed The player speed to set.
+     */
+    void setSpeed(float nSpeed);
 
 
     /** PUBLIC METHODS **/
