@@ -26,14 +26,14 @@ bool SpecialBoxes::operator==(SpecialBoxes& box) const{
             && this->hight == box.getHight();
 }
 
-int SpecialBoxes::applySpecialBoxPower(Player *player,int* statePtr) {
-    int state;
+int SpecialBoxes::applySpecialBoxPower(Player *player,int state){//int* statePtr) {
+    /*int state;
     if(statePtr == nullptr){
         srand(time(nullptr));
         state =  rand()%4;
     }else{
         state = *statePtr > 1 ? *statePtr : *statePtr+1%2;
-    }
+    }*/
 
     switch (state) {
         case 0:

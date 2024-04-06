@@ -387,10 +387,14 @@ void Game::handleCollisionsWithSpecialBox(Player *player) {
     int count = 0;
     for (SpecialBoxes &box : level.getSpecialBoxes()) {
         if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
-            int state = box.applySpecialBoxPower(player, nullptr);
+            srand(time(nullptr));
+            int state =  rand()%4;
+            //int state = box.applySpecialBoxPower(player, nullptr);
+            box.applySpecialBoxPower(player, state);
             std::cout<<"done with the change and the state is "<<state<<std::endl;
+            //initialisation of the data
             GameData* data = static_cast<GameData *>(calloc(1, sizeof(GameData)));
-                   data->state = state;
+                   data->state = state > 1 ? state : state+1%2;//inverse the state
                    data->player=player;
                    data->box = &box;
             std::cout<<"done with the structure with state "<<data->state<<std::endl;
@@ -912,7 +916,7 @@ void Game::sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMaskPtr) {
     //lock_change.lock();
      std::cout << "Wait for 4 seconds"<<std::endl;
     sleep(4);
-    data->box->applySpecialBoxPower(data->player,&data->state);
+    data->box->applySpecialBoxPower(data->player,data->state);
     std::cout << "done with waiting the state is "<<(data->state)<<std::endl;
     //lock_change.unlock();
     free(p);
