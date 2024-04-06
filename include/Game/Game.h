@@ -207,20 +207,18 @@ private:
     bool enable_platforms_movement = true;
 
     GameState gameState = GameState::STOPPED; /**< The current game state. */
-    static std::mutex lock_change;
 
+    //structure of the data needed for the special effects
     typedef struct {
-        //Player* player;
         SpecialBoxes* box;
         time_t t;
         int state;
     }GameData;
 
-    std::queue<GameData> timeQueue;
+    //queue in order to keep track of the effects applied on the player
+    std::queue<GameData*> timeQueue;
 
     /** PRIVATE METHODS **/
-
-    //static void* timer(void* p);
     /**
      * @brief Handles SDL events, updating the movement variables accordingly.
      */

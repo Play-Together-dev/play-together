@@ -2,7 +2,7 @@
 #include <thread>
 #include "../../include/Game/Game.h"
 
-std::mutex Game::lock_change;
+
 /**
  * @file Game.cpp
  * @brief Implements the Game class responsible for handling the main game logic.
@@ -383,43 +383,48 @@ void Game::handleCollisionsWithObstacles(Player *player) const {
 }
 
 void Game::handleCollisionsWithSpecialBox(Player *player) {
-    //pthread_t idThread[level.getSpecialBoxes().size()];
     int count = 0;
+    //checks if the queue is empty
     if(!timeQueue.empty()){
+        //in this case we keep the current size of the queue
         int  currentSizeQueue = timeQueue.size();
+
         while( count < currentSizeQueue ){
-            GameData current = timeQueue.front();
-            if (difftime(time(nullptr) ,current.t) >= 4){
-                current.box->applySpecialBoxPower(player,current.state);
-                //free somehow the GameData
+            //we get the first element of the queue
+            GameData* current = timeQueue.front();
+            //check if the time of the power has passed
+            if (difftime(time(nullptr) ,current->t) >= 4){
+                //we remove the power
+                current->box->applySpecialBoxPower(player,current->state);
+                //we remove the element form the queue since is not necessary
                 timeQueue.pop();
+                //free the allocated memory
+                free(current);
+                //check for the rest elements of the queue
                 count++;
             }else{
+                //in means that all the other elements have smaller time difference
+                // -> not necessary to have a further check
                 count = currentSizeQueue;
             }
         }
-
-
     }
+
     for (SpecialBoxes &box : level.getSpecialBoxes()) {
         if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
-            //get the state if not assigned
+            //initialise the state
             srand(time(nullptr));
             int state =  rand()%4;
-            //int state = box.applySpecialBoxPower(player, nullptr);
+            //apply the first state
             box.applySpecialBoxPower(player, state);
-            std::cout<<"done with the change and the state is "<<state<<std::endl;
-            //initialisation of the data
+            //allocate memory for the data
             GameData* data = static_cast<GameData *>(calloc(1, sizeof(GameData)));
-                   data->state = state > 1 ? state : (state+1)%2;//inverse the state
-                   //data->player=player;
-                    time(&data->t);
-                   data->box = &box;
-                   timeQueue.push(*data);
-            std::cout<<"done with the structure with state "<<data->state<<std::endl;
-            //std::thread t(timer,&data);
-            //pthread_create(&idThread[count],NULL,timer,data);
-            //count++;
+            //initialise the gameData
+            data->state = state > 1 ? state : (state+1)%2;//inverse the state
+            time(&data->t);
+            data->box = &box;
+            timeQueue.push(data);
+            //remove the Special Box from the game
             level.removeSpecialBoxe(box);
         }
     }

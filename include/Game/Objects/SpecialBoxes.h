@@ -13,9 +13,25 @@ class SpecialBoxes {
         float y; // the vertical position
         float hight;
         float width;
+        /**
+         * The player gets slower
+         * @param player
+         */
         void getSlower(Player* player);
+        /**
+         * The player gets faster (the speed accelerates)
+         * @param player
+         */
         void getFaster(Player* player);
+        /**
+         * The player changes color depending on the one that he is currently
+         * @param player
+         */
         void changeFigure(Player* player);
+        /**
+         * The player changes size depending on his current size
+         * @param player
+         */
         void changeSize(Player* player);
     public:
 
@@ -34,8 +50,12 @@ class SpecialBoxes {
 
         bool operator==(SpecialBoxes& box) const;
 
-
-       int applySpecialBoxPower(Player* player,int state);//int* state);
+        /**
+         * Responsible to apply the effect of the box on the player
+         * @param player the player
+         * @param state the effect that will be applied
+         */
+       void applySpecialBoxPower(Player* player,int state);
         [[nodiscard]] SDL_FRect getBoundingBox() const;
 
 };
