@@ -383,10 +383,27 @@ void Game::handleCollisionsWithObstacles(Player *player) const {
 }
 
 void Game::handleCollisionsWithSpecialBox(Player *player) {
-    pthread_t idThread[level.getSpecialBoxes().size()];
+    //pthread_t idThread[level.getSpecialBoxes().size()];
     int count = 0;
+    if(!timeQueue.empty()){
+        int  currentSizeQueue = timeQueue.size();
+        while( count < currentSizeQueue ){
+            GameData current = timeQueue.front();
+            if (difftime(time(nullptr) ,current.t) >= 4){
+                current.box->applySpecialBoxPower(player,current.state);
+                //free somehow the GameData
+                timeQueue.pop();
+                count++;
+            }else{
+                count = currentSizeQueue;
+            }
+        }
+
+
+    }
     for (SpecialBoxes &box : level.getSpecialBoxes()) {
         if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
+            //get the state if not assigned
             srand(time(nullptr));
             int state =  rand()%4;
             //int state = box.applySpecialBoxPower(player, nullptr);
@@ -394,13 +411,15 @@ void Game::handleCollisionsWithSpecialBox(Player *player) {
             std::cout<<"done with the change and the state is "<<state<<std::endl;
             //initialisation of the data
             GameData* data = static_cast<GameData *>(calloc(1, sizeof(GameData)));
-                   data->state = state > 1 ? state : state+1%2;//inverse the state
-                   data->player=player;
+                   data->state = state > 1 ? state : (state+1)%2;//inverse the state
+                   //data->player=player;
+                    time(&data->t);
                    data->box = &box;
+                   timeQueue.push(*data);
             std::cout<<"done with the structure with state "<<data->state<<std::endl;
             //std::thread t(timer,&data);
-            pthread_create(&idThread[count],NULL,timer,data);
-            count++;
+            //pthread_create(&idThread[count],NULL,timer,data);
+            //count++;
             level.removeSpecialBoxe(box);
         }
     }
@@ -910,7 +929,7 @@ void Game::sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMaskPtr) {
         *lastKeyboardStateMaskPtr = currentKeyboardStateMask;
     }
 }
-
+/*
  void* Game::timer(void* p)  {
     GameData* data = (GameData*)p;
     //lock_change.lock();
@@ -921,4 +940,4 @@ void Game::sendKeyboardStateToNetwork(uint16_t *lastKeyboardStateMaskPtr) {
     //lock_change.unlock();
     free(p);
     pthread_exit(nullptr);
-}
+}*/

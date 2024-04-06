@@ -7,6 +7,7 @@
 #include <string>
 #include <ranges>
 #include <cmath>
+#include <queue>
 #include <algorithm>
 #include "Polygon.h"
 #include "Camera.h"
@@ -209,14 +210,17 @@ private:
     static std::mutex lock_change;
 
     typedef struct {
-        Player* player;
+        //Player* player;
         SpecialBoxes* box;
+        time_t t;
         int state;
     }GameData;
 
+    std::queue<GameData> timeQueue;
+
     /** PRIVATE METHODS **/
 
-    static void* timer(void* p);
+    //static void* timer(void* p);
     /**
      * @brief Handles SDL events, updating the movement variables accordingly.
      */
