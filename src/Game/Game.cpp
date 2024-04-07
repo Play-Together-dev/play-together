@@ -395,9 +395,14 @@ void Game::handleCollisionsWithSpecialBox(Player *player) {
             //check if the time of the power has passed
             if (difftime(time(nullptr) ,current->t) >= 4){
                 //we remove the power
-                current->box->applySpecialBoxPower(player,current->state);
+                if(changedCoulorState <= 1)
+                    current->box->applySpecialBoxPower(player,current->state);
                 //we remove the element form the queue since is not necessary
                 timeQueue.pop();
+                if(current->state == 4){
+                    //reduce count color state
+                    changedCoulorState--;
+                }
                 //free the allocated memory
                 free(current);
                 //check for the rest elements of the queue
@@ -414,13 +419,18 @@ void Game::handleCollisionsWithSpecialBox(Player *player) {
         if(checkAABBCollision(player->getBoundingBox(),box.getBoundingBox())){
             //initialise the state
             srand(time(nullptr));
-            int state =  rand()%4;
-            //apply the first state
-            box.applySpecialBoxPower(player, state);
+            int state =  rand()%5;
+            if(state == 4) changedCoulorState++;
+            if(changedCoulorState <= 1)//apply the first state
+                box.applySpecialBoxPower(player, state);
+
+
+            std::cout<<"count change : "<<changedCoulorState<<std::endl;
             //allocate memory for the data
             GameData* data = static_cast<GameData *>(calloc(1, sizeof(GameData)));
             //initialise the gameData
-            data->state = state > 1 ? state : (state+1)%2;//inverse the state
+           // data->state = state > 1 ? state : (state+1)%2;//inverse the state
+            data->state = state > 3 ? state : (state^1);
             time(&data->t);
             data->box = &box;
             timeQueue.push(data);

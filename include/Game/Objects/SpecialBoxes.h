@@ -33,6 +33,8 @@ class SpecialBoxes {
          * @param player
          */
         void changeSize(Player* player);
+        void getBigger(Player* player);
+        void getSmaller(Player* player);
     public:
 
         SpecialBoxes();

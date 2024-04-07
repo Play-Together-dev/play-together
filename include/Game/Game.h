@@ -214,7 +214,7 @@ private:
         time_t t;
         int state;
     }GameData;
-
+    int changedCoulorState = 0;
     //queue in order to keep track of the effects applied on the player
     std::queue<GameData*> timeQueue;
 

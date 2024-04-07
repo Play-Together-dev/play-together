@@ -38,10 +38,14 @@ void SpecialBoxes::applySpecialBoxPower(Player *player,int state){//int* statePt
             break;
         case 2:
             std::cout<<"case 2"<<std::endl;
-            changeSize(player);
+            getSmaller(player);
             break;
         case 3:
             std::cout<<"case 3"<<std::endl;
+            getBigger(player);
+            break;
+        case 4:
+            std::cout<<"case 4"<<std::endl;
             changeFigure(player);
             break;
         default:
@@ -77,6 +81,23 @@ void SpecialBoxes::changeSize(Player* player){
     player->setW(nSizeW);
 
 }
+void SpecialBoxes::getBigger(Player *player) {
+    float nSizeH = player->getH() < MAX_HIGHT ? player->getH()*2 : player->getH();
+    float nSizeW = player->getW() < MAX_WHIDTH ? player->getW()*2 : player->getW();
+
+    player->setH(nSizeH);
+    player->setW(nSizeW);
+}
+
+void SpecialBoxes::getSmaller(Player *player) {
+    float nSizeH = player->getH() > MIN_HIGHT ? player->getH()/2 : player->getH();
+    float nSizeW = player->getW() > MIN_WHIDTH ? player->getW()/2 : player->getW();
+
+    player->setH(nSizeH);
+    player->setW(nSizeW);
+
+}
+
 SDL_FRect SpecialBoxes::getBoundingBox() const {
     return {x, y, width, hight};
 }
